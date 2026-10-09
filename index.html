@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Knabbel</title>
+<link rel="preconnect" href="https://generativelanguage.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://world.openfoodfacts.org" crossorigin>
+<script defer src="nevo.js?v=2026.10.09-1418"></script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Knabbel">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAEBDF" data-c="#FAEBDF">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141A15" data-c="#141A15">
+<link rel="stylesheet" href="css/app.css?v=2026.10.09-1418">
+</head>
+<body>
+<div class="app" id="app"></div>
+<nav class="nav" id="nav" hidden></nav>
+<div id="sheetRoot"></div>
+<div id="toastRoot"></div>
+
+<!-- The app code, in this order: every file may use what the files above it define. "defer": the browser fetches all
+     files at once while it builds the page, and runs them in this same order once the page is read. -->
+<script defer src="js/basis.js?v=2026.10.09-1418"></script>
+<script defer src="js/rekenen.js?v=2026.10.09-1418"></script>
+<script defer src="js/data/winkel.js?v=2026.10.09-1418"></script>
+<script defer src="js/outfits.js?v=2026.10.09-1418"></script>
+<script defer src="js/knabbel.js?v=2026.10.09-1418"></script>
+<script defer src="js/badges.js?v=2026.10.09-1418"></script>
+<script defer src="js/ai.js?v=2026.10.09-1418"></script>
+<script defer src="js/ai-meting.js?v=2026.10.09-1418"></script>
+<script defer src="js/shell.js?v=2026.10.09-1418"></script>
+<script defer src="js/instellingen.js?v=2026.10.09-1418"></script>
+<script defer src="js/vandaag.js?v=2026.10.09-1418"></script>
+<script defer src="js/loggen.js?v=2026.10.09-1418"></script>
+<script defer src="js/producten.js?v=2026.10.09-1418"></script>
+<script defer src="js/advies.js?v=2026.10.09-1418"></script>
+<script defer src="js/voortgang.js?v=2026.10.09-1418"></script>
+<script defer src="js/vraag.js?v=2026.10.09-1418"></script>
+<script defer src="js/knabbel-pagina.js?v=2026.10.09-1418"></script>
+<script defer src="js/acties.js?v=2026.10.09-1418"></script>
+<script defer src="js/thema.js?v=2026.10.09-1418"></script>
+<!-- "Probleem melden" (take out these two lines to remove it); meld-cfg.js holds the access key and is made by publiceer.ps1 -->
+<script defer src="js/meld-cfg.js?v=2026.10.09-1418"></script>
+<script defer src="js/melden.js?v=2026.10.09-1418"></script>
+<script defer src="js/off-lokaal.js?v=2026.10.09-1418"></script>
+<script defer src="js/start.js?v=2026.10.09-1418"></script>
+</body>
+</html>

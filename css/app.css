@@ -1,0 +1,1059 @@
+/* Layout: one-column phone app, max 480px, bottom tab bar with centre add button, bottom sheets for logging and check-ins */
+:root{
+  --bg:#FAEBDF; --surface:#FFFFFF; --surface2:#E6ECDF; --ink:#1F2A21; --muted:#667061; --line:#D6DDCD;
+  --accent:#D4521B; --accent-ink:#FFFFFF; --accent-text:#B8461A; --warn-ink:#8A5D00; --leaf:#3C8A55; --warn:#C98A12; --bad:#C8423B; --sky:#3E8FD6; --obese:#DE6A26;
+  --p:#3C8A55; --c:#E0A526; --f:#D9587A;
+  --fur:#C4501E; --fur2:#D4652B; --ring:#7E2F12; --dark:#3A1F18; --cream:#FFF4EA; --tear:#9A3A18; --pink:#F2A3A3; --pet-ink:#1E120D;
+  --display:"Fredoka",ui-rounded,"SF Pro Rounded","Roboto",system-ui,sans-serif;
+  --body:ui-rounded,"Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:18px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141A15; --surface:#1E261F; --surface2:#28322A; --ink:#EAF0E4; --muted:#9CA895; --line:#34402F;
+  --accent:#FF7A45; --accent-ink:#1A0E07; --accent-text:#FF8A5B; --warn-ink:#E9B044; --leaf:#6CC287; --warn:#E9B044; --bad:#F07A70; --sky:#6BB0EE; --obese:#F08A4B;
+  --p:#6CC287; --c:#EDBE4E; --f:#EE7F9C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141A15; --surface:#1E261F; --surface2:#28322A; --ink:#EAF0E4; --muted:#9CA895; --line:#34402F;
+  --accent:#FF7A45; --accent-ink:#1A0E07; --accent-text:#FF8A5B; --warn-ink:#E9B044; --leaf:#6CC287; --warn:#E9B044; --bad:#F07A70; --sky:#6BB0EE; --obese:#F08A4B;
+  --p:#6CC287; --c:#EDBE4E; --f:#EE7F9C; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+/* Dark mode: behind the cards a soft forest gradient, a deeper green at the top. A fixed layer, so it stays in place
+   while you scroll (the iPhone ignores background-attachment:fixed). Sheets and fields keep the plain --bg. */
+html{background:var(--bg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body{background:transparent}
+  :root:not([data-theme="light"])::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(180deg,#1E2E23 0%,#151D17 45%,#111612 100%)}}
+:root[data-theme="dark"] body{background:transparent}
+:root[data-theme="dark"]::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(180deg,#1E2E23 0%,#151D17 45%,#111612 100%)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;padding-inline:16px;-webkit-tap-highlight-color:transparent}
+html{touch-action:manipulation}
+.app{max-width:480px;margin:0 auto;padding-block:14px 110px;display:flex;flex-direction:column;gap:14px}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:.005em}
+h1{font-size:20px} h2{font-size:20px} h3{font-size:15px}
+p{margin:0}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.card{background:var(--surface);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px}
+.btn{background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:14px;padding:12px 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:disabled{opacity:.5}
+.btn.ghost{background:var(--surface2);color:var(--ink)}
+.btn.small{padding:8px 12px;font-size:15px;border-radius:12px}
+.btn.block{width:100%}
+.btn.danger{background:transparent;color:var(--bad);border:1.5px solid color-mix(in srgb,var(--bad) 45%,transparent)}
+.icon-btn{width:44px;height:44px;border-radius:12px;background:var(--surface);display:grid;place-items:center;font-size:15px;font-weight:700}
+.icon-btn:disabled{opacity:.35}
+.chip{border:1.5px solid var(--line);border-radius:999px;padding:6px 14px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:400;background:var(--surface)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+label.field{display:flex;flex-direction:column;gap:5px;font-size:15px;font-weight:400;color:var(--muted);min-width:0}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:84px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pickers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.pickers button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 8px;min-height:92px;border-radius:16px;text-align:center;
+  background:color-mix(in srgb,var(--accent) 12%,var(--surface));border:2px solid color-mix(in srgb,var(--accent) 45%,transparent);color:var(--ink)}
+.pickers svg{width:30px;height:30px;color:var(--accent-text);margin-bottom:2px}
+.pickers b{font-size:15px}
+.describe{display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:16px;padding:14px;border:2px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.describe .dh{display:flex;gap:10px;align-items:flex-start}
+.describe .dh>span:last-child{display:flex;flex-direction:column;gap:2px;font-size:15px;color:var(--ink)}
+.describe .di{width:36px;height:36px;border-radius:50%;background:color-mix(in srgb,var(--accent) 14%,var(--surface));display:grid;place-items:center;font-size:20px;flex:none}
+.describe textarea{background:var(--bg)}
+.pickers span{font-size:12px;color:var(--muted);font-weight:400}
+/* Describing is the main way in; scan, search and photo sit right under it as one compact row. */
+.pickers.pkrow button{flex-direction:row;justify-content:center;gap:6px;min-height:48px;padding:8px 6px;border-radius:14px}
+.pickers.pkrow svg{width:20px;height:20px;margin:0}
+.pickers.pkrow b{font-size:12px}
+.describe.first{gap:8px}
+.describe.first textarea{min-height:88px}
+.describe .dq{font-size:15px;font-weight:700;color:var(--ink)}
+/* Explanations folded away behind a small i. */
+details.infox{margin-top:2px}
+details.infox summary{list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;cursor:pointer;font-size:12px;font-weight:400;color:var(--muted)}
+details.infox summary::-webkit-details-marker{display:none}
+details.infox summary i{font-style:normal;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--accent-text);border:1.5px solid currentColor}
+details.infox[open] summary{color:var(--ink)}
+details.infox p{margin:0 0 6px}
+.ringlegend{display:flex;flex-direction:column;gap:8px}
+.ringlegend span{display:flex;align-items:center;gap:10px}
+.ringmode,[data-act=goto-ai],[data-act=water-add],[data-act=tip-hide],[data-act=explain-trend],.seg button,.top [data-nav=profile],.add-line[data-pettab=shop]{position:relative}
+.ringmode::after,[data-act=goto-ai]::after,[data-act=water-add]::after,[data-act=tip-hide]::after,[data-act=explain-trend]::after,.seg button::after,.top [data-nav=profile]::after,.add-line[data-pettab=shop]::after{
+  content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}
+.wnav{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.wnav span{flex:1;text-align:center;font-size:12px;font-weight:400;color:var(--muted)}
+.wnav .btn{min-width:44px;min-height:44px;font-size:20px;padding:0}
+.wnav .btn:disabled{opacity:.3}
+.ringnum .wkline{font-size:12px;font-weight:400;color:var(--leaf);margin-top:2px}
+.ringnum .wkline.over{color:var(--warn-ink)}
+.ringlegend .tickmark{display:inline-block;flex:none;width:4px;height:18px;margin:0 6px;border-radius:2px;background:var(--ink);opacity:.55}
+.ringlegend .lapmark{display:inline-block;flex:none;width:24px;height:10px;border-radius:5px;background:linear-gradient(90deg,color-mix(in srgb,var(--warn) 45%,var(--surface)) 50%,var(--bad) 50%)}
+.ringlegend .nowdot{display:inline-block;flex:none;width:12px;height:12px;margin:0 2px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px var(--surface),0 0 0 4.5px color-mix(in srgb,var(--ink) 40%,transparent)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.seg{display:flex;background:var(--surface2);border-radius:14px;padding:4px;gap:4px}
+.mealpick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mealpick button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px 7px;border-radius:14px;background:var(--surface);border:2px solid var(--line);font-weight:700;font-size:12px;color:var(--muted);min-width:0;white-space:nowrap}
+.mealpick button i{font-style:normal;font-size:20px;line-height:1.25}
+.mealpick button[aria-pressed="true"]{border-color:var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.seg button{flex:1;padding:9px 4px;border-radius:11px;font-weight:700;font-size:15px;color:var(--muted);min-width:0}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgb(0 0 0/.1)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.datebar{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto}
+.top > .row{flex:none}
+.datebar .d{font-weight:700;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.ring{position:relative;width:148px;height:148px}
+.ring > svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring .big{font-family:var(--display);font-size:32px;font-weight:400;line-height:1}
+.ring .lbl{font-size:12px;color:var(--muted);font-weight:400}
+.macros{display:flex;flex-direction:column;gap:10px;min-width:0}
+.macro .row{font-size:15px;font-weight:400}
+.bar{contain:layout;height:8px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px}
+.bubble{background:var(--surface2);border-radius:16px 16px 16px 4px;padding:10px 12px;font-weight:400;font-size:15px}
+/* "Vraag het Knabbel": your question on the right in the accent colour, the answer as a speech bubble on the left */
+.qa .qa-q{align-self:flex-end;max-width:85%;margin:0;background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-radius:16px 16px 4px 16px;padding:8px 12px;font-size:15px;font-weight:600}
+.qa .qa-a{max-width:92%;display:flex;flex-direction:column;gap:6px}
+.qa .qa-a p{margin:0}
+.qa .chip{font-size:13px}
+.pet svg{display:block;width:100%;height:auto}
+/* The panda only moves while it is on screen ("alive"): breathing, blinking, a swaying tail, twitching ears,
+   and its outfit moving along. Everything is transform/opacity, so it stays smooth and light on the battery. */
+.pet svg .eyes{transform-box:fill-box;transform-origin:center}
+.pet svg .ear.l{transform-origin:62px 62px}
+.pet svg .ear.r{transform-origin:138px 62px}
+.pet svg .tail{transform-origin:130px 160px}
+.pet.alive svg{animation:idle 3.4s ease-in-out infinite;transform-origin:50% 96%;will-change:transform}
+@keyframes idle{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-3px) scale(.985,1.02)}}
+.pet.alive svg .eyes{animation:blink 4.6s ease-in-out infinite}
+.pet.alive svg .tail{animation:sway 2.8s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-5deg)}to{transform:rotate(7deg)}}
+.pet.alive svg .ear.l{animation:twitchL 7s ease-in-out infinite}
+.pet.alive svg .ear.r{animation:twitchR 7s ease-in-out 2.6s infinite}
+@keyframes twitchL{0%,86%,100%{transform:rotate(0)}89%{transform:rotate(-12deg)}92%{transform:rotate(0)}95%{transform:rotate(-7deg)}}
+@keyframes twitchR{0%,86%,100%{transform:rotate(0)}89%{transform:rotate(12deg)}92%{transform:rotate(0)}95%{transform:rotate(7deg)}}
+.pet.alive.m-hungry svg{animation-duration:1.8s}
+.pet.alive.m-starving svg{animation:rumble 2.4s ease-in-out infinite}
+@keyframes rumble{0%,66%,100%{transform:translate(0,0)}33%{transform:translate(0,-2px)}72%{transform:translate(-2px,0) rotate(-1.5deg)}76%{transform:translate(2px,0) rotate(1.5deg)}80%{transform:translate(-2px,0) rotate(-1deg)}84%{transform:translate(1px,0)}88%{transform:translate(0,0)}}
+.pet.alive.m-full svg{animation:content 4.6s ease-in-out infinite}
+@keyframes content{0%,100%{transform:rotate(0) translateY(0)}25%{transform:rotate(-2deg) translateY(-2px)}75%{transform:rotate(2deg) translateY(-2px)}}
+.pet.alive.m-stuffed svg{animation-duration:5s}
+.pet.alive.m-sleepy svg{animation-duration:5.5s}
+.pet.alive .zz text{animation:zz 3s ease-in-out infinite}
+.pet.alive .zz text + text{animation-delay:1s}
+@keyframes zz{0%{transform:translateY(6px);opacity:0}40%{opacity:1}100%{transform:translateY(-10px);opacity:0}}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+.pet.hop svg,.pet.alive.hop svg{animation:hop .45s cubic-bezier(.3,1.6,.5,1) 2}
+.pet.spin svg,.pet.alive.spin svg{animation:spin .7s cubic-bezier(.4,1.4,.5,1)}
+@keyframes spin{50%{transform:translateY(-10px) rotate(-8deg) scale(1.05)}}
+@keyframes hop{50%{transform:translateY(-14px)}}
+.pet.wag .tail,.pet.alive.wag .tail{animation:wag .3s ease-in-out 5 alternate}
+.pet svg .arm-r,.pet svg .handacc{transform-box:view-box;transform-origin:130px 140px}
+.pet.alive.wave svg .arm-r,.pet.alive.wave svg .handacc{animation:wave 1.7s ease-in-out}
+@keyframes wave{0%,100%{transform:rotate(0)}16%{transform:rotate(-88deg)}30%{transform:rotate(-66deg)}44%{transform:rotate(-90deg)}58%{transform:rotate(-66deg)}72%{transform:rotate(-86deg)}86%{transform:rotate(-20deg)}}
+.pet.alive.look svg .eyes{animation:look 1.9s ease-in-out}
+@keyframes look{0%,100%{transform:translateX(0)}18%,40%{transform:translateX(-4px)}58%,82%{transform:translateX(4px)}}
+.pet.alive.yawn svg .mouth{animation:yawn 1.9s ease-in-out}
+@keyframes yawn{0%,100%{transform:none}30%,68%{transform:scale(1.3,2.5)}}
+.pet.alive.yawn svg .eyes{animation:squint 1.9s ease-in-out}
+@keyframes squint{0%,100%{transform:none}28%,70%{transform:scaleY(.2)}}
+.pet.alive.yawn svg,.pet.alive.stretch svg{animation:stretch 1.9s ease-in-out}
+@keyframes stretch{0%,100%{transform:none}35%,65%{transform:scale(.95,1.08)}}
+.pet.alive.tilt svg{animation:tilt 1.7s ease-in-out}
+@keyframes tilt{0%,100%{transform:none}22%,72%{transform:rotate(-9deg)}}
+.pet.alive.dance svg{animation:dance 1.7s ease-in-out}
+@keyframes dance{0%,100%{transform:none}15%{transform:translateY(-8px) rotate(-8deg)}30%{transform:none}45%{transform:translateY(-8px) rotate(8deg)}60%{transform:none}78%{transform:translateY(-14px) scale(1.05)}}
+@keyframes wag{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
+.pet{position:relative}
+.poke-heart{position:absolute;left:50%;top:18%;font-size:32px;pointer-events:none;animation:pokeHeart 1s ease-out forwards}
+.pet-bite{position:absolute;inset:0;pointer-events:none;line-height:1;z-index:2;transform:translate(82%,82%)}
+.pet-bite i{position:absolute;left:0;top:0;font-style:normal;opacity:0;transform:translate(-50%,-50%)}
+.pet-bite.eat{animation:biteMove 1.3s ease-in-out forwards}.pet-bite.eat i{animation:biteIcon 1.3s ease-in-out forwards}
+.pet-bite.drink{animation:sipMove 1.3s ease-in-out forwards}.pet-bite.drink i{animation:sipIcon 1.3s ease-in-out forwards}
+@keyframes biteMove{0%{transform:translate(82%,84%)}46%,100%{transform:translate(50%,60%)}}
+@keyframes biteIcon{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}14%{opacity:1;transform:translate(-50%,-50%) scale(1)}46%{transform:translate(-50%,-50%) scale(.85);opacity:1}58%,100%{transform:translate(-50%,-50%) scale(.15);opacity:0}}
+@keyframes sipMove{0%{transform:translate(82%,84%)}34%{transform:translate(60%,62%)}44%,74%{transform:translate(58%,60%)}90%{transform:translate(74%,78%)}100%{transform:translate(78%,82%)}}
+@keyframes sipIcon{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}14%{opacity:1;transform:translate(-50%,-50%) scale(1)}34%{transform:translate(-50%,-50%) rotate(0)}44%,74%{transform:translate(-50%,-50%) rotate(-38deg)}90%{transform:translate(-50%,-50%) rotate(0) scale(.8);opacity:1}100%{transform:translate(-50%,-50%) scale(.8);opacity:0}}
+.pet svg .mouth{transform-box:fill-box;transform-origin:50% 0}
+.pet.eating svg .mouth{animation:chew .15s ease-in-out .6s 5 alternate}
+.pet.drinking svg .mouth{animation:chew .25s ease-in-out .55s 3 alternate}
+@keyframes chew{to{transform:scaleY(.55) translateY(1px)}}
+.pet svg .headacc{transform-box:fill-box;transform-origin:50% 100%}
+.pet.eating svg .headacc.cover,.pet.drinking svg .headacc.cover{animation:maskLift 1.3s ease-in-out}
+@keyframes maskLift{0%,100%{transform:none}22%,80%{transform:translateY(-32px) rotate(-8deg)}}
+@keyframes pokeHeart{from{transform:translate(-50%,0) scale(.6);opacity:1}to{transform:translate(calc(-50% + var(--dx)),-70px) scale(1.2);opacity:0}}
+[class*="fx-"]{transform-box:fill-box;transform-origin:center}
+.fx-flicker,.fx-flutter,.fx-pendulum{transform-origin:50% 0}
+.fx-sway,.fx-swing{transform-origin:0 100%}
+:is(.pet.alive,.shop button.alive) .fx-flip{animation:fxflip 1.1s ease-in-out infinite}
+@keyframes fxflip{50%{transform:scaleX(.08)}}
+:is(.pet.alive,.shop button.alive) .fx-float{animation:fxfloat 1.4s ease-in-out infinite alternate}
+@keyframes fxfloat{to{transform:translateY(-5px)}}
+:is(.pet.alive,.shop button.alive) .fx-flicker{animation:fxflick .16s steps(2) infinite alternate}
+@keyframes fxflick{to{transform:scaleY(.7)}}
+:is(.pet.alive,.shop button.alive) .fx-blink{animation:fxblink 1.2s steps(2) infinite}
+:is(.pet.alive,.shop button.alive) .fx-tear{animation:fxtear 1.6s ease-in infinite}
+@keyframes fxtear{0%{transform:translateY(-8px);opacity:0}30%{opacity:1}100%{transform:translateY(14px);opacity:0}}
+:is(.pet.alive,.shop button.alive) .fx-buzz{animation:fxbuzz .25s steps(2) infinite alternate}
+@keyframes fxbuzz{to{transform:translate(1.5px,-1.5px)}}
+:is(.pet.alive,.shop button.alive) .fx-sway{animation:fxsway 2.6s ease-in-out infinite alternate}
+@keyframes fxsway{from{transform:rotate(-4deg)}to{transform:rotate(5deg)}}
+:is(.pet.alive,.shop button.alive) .fx-flutter{animation:fxflutter 1.6s ease-in-out infinite alternate}
+@keyframes fxflutter{from{transform:skewX(-4deg) scaleY(1)}to{transform:skewX(4deg) scaleY(1.03)}}
+:is(.pet.alive,.shop button.alive) .fx-flap{animation:fxflap .9s ease-in-out infinite alternate}
+@keyframes fxflap{to{transform:scaleX(.82)}}
+:is(.pet.alive,.shop button.alive) .fx-glow{animation:fxglow 2.2s ease-in-out infinite alternate}
+@keyframes fxglow{from{opacity:.7;transform:translateY(0)}to{opacity:1;transform:translateY(-3px)}}
+:is(.pet.alive,.shop button.alive) .fx-lift{animation:fxlift 1.4s ease-in-out infinite}
+@keyframes fxlift{50%{transform:translateY(-10px)}}
+:is(.pet.alive,.shop button.alive) .fx-pendulum{animation:fxpend 1.8s ease-in-out infinite alternate}
+@keyframes fxpend{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+:is(.pet.alive,.shop button.alive) .fx-swing{animation:fxswing 1.2s ease-in-out infinite alternate}
+@keyframes fxswing{from{transform:rotate(-8deg)}to{transform:rotate(10deg)}}
+:is(.pet.alive,.shop button.alive) .fx-wobble{animation:fxwob 2.4s ease-in-out infinite}
+@keyframes fxwob{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-14deg)}82%{transform:rotate(12deg)}88%{transform:rotate(-6deg)}}
+:is(.pet.alive,.shop button.alive) .fx-twinkle{animation:fxtw 1.8s ease-in-out infinite}
+@keyframes fxtw{0%,100%{transform:scale(.4);opacity:0}50%{transform:scale(1.15);opacity:1}}
+:is(.pet.alive,.shop button.alive) .fx-note{animation:fxnote 2.4s ease-out infinite}
+:is(.pet.alive,.shop button.alive) .fx-note.d2{animation-delay:1.2s}
+@keyframes fxnote{0%{transform:translateY(8px);opacity:0}30%{opacity:1}100%{transform:translateY(-14px);opacity:0}}
+@keyframes fxblink{50%{opacity:0}}
+:is(.pet.alive,.shop button.alive) .fx-twinkle.d2{animation-delay:.9s}
+:is(.pet.alive,.shop button.alive) .fx-spin{animation:fxspin 6s linear infinite}
+@keyframes fxspin{to{transform:rotate(360deg)}}
+:is(.pet.alive,.shop button.alive) .fx-rain{animation:fxrain 1s linear infinite}
+@keyframes fxrain{0%{transform:translateY(-6px);opacity:0}30%{opacity:1}100%{transform:translateY(10px);opacity:0}}
+:is(.pet.alive,.shop button.alive) .fx-hue{animation:fxhue 3s steps(24) infinite}
+@keyframes fxhue{to{filter:hue-rotate(360deg)}}
+:is(.pet.alive,.shop button.alive) .fx-pulse{animation:fxpulse 1.6s ease-in-out infinite alternate}
+@keyframes fxpulse{from{transform:scale(.9);opacity:.25}to{transform:scale(1.12);opacity:.6}}
+:is(.pet.alive,.shop button.alive) .fx-glint{animation:fxglint 2.6s ease-in-out infinite}
+@keyframes fxglint{0%,100%{opacity:.35}50%{opacity:.9}}
+:is(.pet.alive,.shop button.alive) .fx-scan{animation:fxscan 1.4s ease-in-out infinite alternate}
+@keyframes fxscan{to{transform:translateX(66px)}}
+:is(.pet.alive,.shop button.alive) .fx-spark{animation:fxspark .18s steps(2) infinite alternate}
+@keyframes fxspark{to{transform:rotate(18deg) scale(.85)}}
+:is(.pet.alive,.shop button.alive) .fx-shimmer{animation:fxshim 2.4s ease-in-out infinite alternate}
+@keyframes fxshim{from{opacity:.75}to{opacity:1}}
+.fx-flicker2,.fx-fallblock{transform-origin:50% 100%}
+:is(.pet.alive,.shop button.alive) .fx-flicker2{animation:fxflick2 .22s steps(2) infinite alternate}
+@keyframes fxflick2{to{transform:scaleY(.82) scaleX(1.06)}}
+:is(.pet.alive,.shop button.alive) .fx-roll{animation:fxroll 2.2s ease-in-out infinite}
+@keyframes fxroll{0%,60%,100%{transform:rotate(0)}70%{transform:rotate(90deg) translateY(-6px)}80%{transform:rotate(180deg)}90%{transform:rotate(270deg) translateY(-3px)}}
+:is(.pet.alive,.shop button.alive) .fx-fallblock{animation:fxfall 1.8s steps(6) infinite}
+@keyframes fxfall{from{transform:translateY(-6px);opacity:1}85%{transform:translateY(16px);opacity:1}to{transform:translateY(16px);opacity:0}}
+:is(.pet.alive,.shop button.alive) .fx-beat{animation:fxbeat 1s ease-in-out infinite}
+@keyframes fxbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
+:is(.pet.alive,.shop button.alive) .fx-drop{animation:fxdrop .8s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes fxdrop{from{transform:translateY(-70px);opacity:0}}
+.seedpill.pop{animation:pop .5s cubic-bezier(.3,1.8,.5,1)}
+@keyframes pop{40%{transform:scale(1.18)}}
+.blk{gap:10px}
+.blk-h{display:flex;align-items:center;gap:10px;width:100%;min-height:36px;text-align:left}
+.blk-h h3{flex:1;min-width:0}
+.blk-h .bsum{font-weight:700;font-size:15px;color:var(--muted);white-space:nowrap}
+.blk-h .cnt{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:99px;background:var(--surface2);font-size:12px;font-weight:700;color:var(--ink)}
+.blk-h .chev{color:var(--muted);flex:none;transition:transform .2s}
+.blk.shut .blk-h .chev{transform:rotate(-90deg)}
+.blk.shut{padding-block:12px}
+.belly{display:flex;flex-direction:column;gap:5px;width:100%}
+
+.fitcard{display:flex;gap:12px;align-items:center}
+.fitmac{display:grid;grid-template-columns:1fr auto auto 28px;gap:6px 14px;align-items:center;font-size:15px;background:var(--surface2);border-radius:14px;padding:10px 14px}
+.fitmac .h{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.fitmac b,.fitmac .num{text-align:right}
+.fitmac .st{text-align:center;font-weight:700}
+.fitmac .st-ok{color:var(--leaf)} .fitmac .st-over{color:var(--warn-ink)}
+.ringpet{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ring.big{width:210px;height:210px}
+.ring.big .pet{position:absolute;left:50%;top:50%;width:118px;transform:translate(-50%,-52%)}
+.ringnum{display:flex;flex-direction:column;align-items:center;line-height:1.1;margin-top:-2px}
+.ringnum .big{font-family:var(--display);font-size:32px;font-weight:400}
+.ringnum .lbl{font-size:12px;color:var(--muted);font-weight:400}
+.bubble.talk{position:relative;align-self:center;text-align:center;max-width:92%;border-radius:16px;margin-bottom:6px}
+.bubble.talk::after{content:"";position:absolute;left:50%;bottom:-7px;width:14px;height:14px;background:var(--surface2);transform:translateX(-50%) rotate(45deg);border-radius:0 0 3px 0}
+.ask{display:flex;gap:8px}
+.ask input{flex:1;min-width:0}
+.check.compact{background:var(--surface2);padding:8px 12px;min-height:44px;border-radius:12px;font-size:15px}
+.lay{display:flex;align-items:center;gap:8px;min-height:52px;border-top:1px solid var(--line)}
+.lay:first-child{border-top:0}
+.lay .grow{font-weight:700}
+.lay .icon-btn{background:var(--surface2);width:40px;height:40px}
+.works{display:flex;flex-direction:column;gap:2px}
+.works .row{min-height:44px;font-size:15px}
+.works .x{color:var(--muted);font-size:15px;width:36px;height:36px;border-radius:10px;background:var(--surface2);display:grid;place-items:center;flex:none}
+.sports{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sports .chip{flex-direction:column;gap:2px;padding:8px 4px;font-size:12px;text-align:center;border-radius:14px;min-height:64px}
+.sports .chip span{font-size:20px}
+.offres{display:flex;flex-direction:column;gap:6px}
+.offres button{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:12px;padding:10px 12px;text-align:left;min-height:52px}
+.offres b{display:block;font-size:15px}
+.offres .ns{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-weight:700;font-size:15px;color:#fff;flex:none;text-transform:uppercase}
+.dayscore{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:40px;font-size:15px;font-weight:400}
+.xp-row{width:100%;min-height:36px}
+.xp-row i{font-style:normal;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--accent-text);color:var(--accent-text);font-size:12px;font-weight:700;margin-left:4px}
+.pettabs{position:sticky;top:0;z-index:5;box-shadow:0 4px 10px -6px rgb(0 0 0/.25)}
+.shopslots button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px;font-size:12px}
+.shopslots button span{font-size:12px;font-weight:400;opacity:.75}
+.badges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.badge{background:var(--surface2);border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;font-size:12px;font-weight:700;line-height:1.2;hyphens:auto;overflow-wrap:anywhere}
+.badge .ic{font-size:32px;line-height:1.1}
+.badge .note{font-size:12px;font-weight:400}
+.badge.locked .ic{filter:grayscale(1);opacity:.35}
+.badge.locked{color:var(--muted)}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+.confetti i{position:absolute;top:-14px;width:8px;height:12px;border-radius:2px;animation:fall 1.6s cubic-bezier(.25,.6,.45,1) forwards}
+@keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--r))}}
+.ring > svg circle,.bar i{transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1),width .7s cubic-bezier(.2,.8,.2,1)}
+/* The round end of the big ring turns along with the arc: same time and same curve as the arc itself. */
+.ringhead{transform-box:view-box;transform-origin:50% 50%;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+/* The calorie ring moves frame by frame (sweepRings), not by these transitions. */
+.ring > svg .sweep circle,.ring > svg .sweep .ringhead,.ring > svg .sweep .ringhead circle{transition:none}
+.ring > svg .ringhead circle{transition:fill .8s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion:reduce){.pet svg,.pet svg *,.poke-heart,[class*="fx-"],.seedpill.pop{animation:none!important}.ring > svg circle,.bar i,.cup i,.ringhead,.ring > svg .ringhead circle{transition:none}.confetti{display:none}}
+.meal-h{display:flex;align-items:center;justify-content:space-between}
+.entry{display:flex;align-items:center;gap:12px;padding:10px 8px;margin:0 -8px;width:calc(100% + 16px);border-top:1px solid var(--line);text-align:left;border-radius:12px}
+.entry:active{background:var(--surface2)}
+.entry .chev{color:var(--muted);font-size:20px;font-weight:400;margin-left:-4px}
+.entry:first-of-type{border-top:0}
+.entry .thumb{width:44px;height:44px;border-radius:14px;background:var(--surface2);display:grid;place-items:center;font-size:20px;line-height:1;flex:none}
+.entry .name{font-weight:700;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3}
+.entry .sub{font-size:12px;color:var(--muted)}
+.entry.flash{position:relative}
+.entry.flash::after{content:"";position:absolute;inset:0;border-radius:inherit;background:color-mix(in srgb,var(--accent) 22%,transparent);pointer-events:none;animation:flashFade 1.6s ease-out forwards}
+@keyframes flashFade{0%,30%{opacity:1}to{opacity:0}}
+.entry.pending .name{color:var(--muted)}
+.entry .kc{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end}
+.entry .kc .tm{font-size:12px;font-weight:400;color:var(--muted)}
+.empty{font-size:15px;color:var(--muted);padding:4px 0}
+.add-line{color:var(--accent-text);font-weight:700;font-size:15px;align-self:flex-start;min-height:44px;padding:6px 0;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 35%,transparent);text-underline-offset:3px}
+.cups{display:flex;gap:6px;flex-wrap:wrap}
+/* Each glass fills up bit by bit (light blue); a full glass turns solid blue with a tick. */
+.cup{contain:layout;width:24px;height:30px;border:2px solid color-mix(in srgb,var(--sky) 50%,var(--line));border-top:0;border-radius:0 0 7px 7px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.cup i{display:block;width:100%;background:color-mix(in srgb,var(--sky) 70%,transparent);transition:height .6s cubic-bezier(.2,.8,.2,1)}
+.cup.full{border-color:var(--sky)}
+.cup.full i{background:var(--sky)}
+.cup.full::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:15px;font-weight:700}
+.wtip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:10px;padding:6px 10px;font-size:12px;display:flex;flex-direction:column;gap:1px;white-space:nowrap;box-shadow:0 4px 14px rgb(0 0 0/.18)}
+.wtip b{font-size:15px}
+.goal-row{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;gap:8px}
+.goal-row .num{font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.goal-row i{font-style:normal;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--accent-text);color:var(--accent-text);display:grid;place-items:center;font-size:12px;font-weight:700}
+
+.fasthours{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.fasthours .chip{padding:8px 0;text-align:center}
+.bmi{display:flex;flex-direction:column;gap:6px}
+details.bmiline summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
+details.bmiline summary::-webkit-details-marker{display:none}
+details.bmiline summary .chev{color:var(--muted);font-weight:700;transition:transform .15s}
+details.bmiline[open] summary .chev{transform:rotate(180deg)}
+.bmibar{position:relative;height:10px;border-radius:99px;overflow:visible;margin-top:4px}
+.bmibar i{position:absolute;top:0;bottom:0}
+.bmibar i:first-child{border-radius:99px 0 0 99px}
+.bmibar i:nth-child(5){border-radius:0 99px 99px 0}
+.bmibar .me{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid var(--surface);transform:translate(-50%,-50%);box-shadow:0 1px 4px rgb(0 0 0/.25)}
+.bmibar .goal{position:absolute;top:-4px;bottom:-4px;width:3px;border-radius:2px;background:var(--ink);opacity:.55;transform:translateX(-50%)}
+.bmiticks{position:relative;height:14px;font-size:12px;color:var(--muted);font-weight:400}
+.bmiticks span{position:absolute;transform:translateX(-50%)}
+.item2{background:var(--surface);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.item2 .nm{font-weight:700;font-size:15px;min-width:0;overflow-wrap:anywhere}
+.item2 .x{color:var(--muted);font-size:15px;width:44px;height:44px;border-radius:10px;background:var(--surface2);display:grid;place-items:center;flex:none}
+.item2.suspect{box-shadow:inset 0 0 0 2px var(--warn)}
+.item2 .why{font-size:12px;font-weight:400;color:var(--warn-ink)}
+.stepper{display:flex;align-items:center;gap:4px;background:var(--surface2);border-radius:12px;padding:3px}
+.stepper button{width:44px;height:44px;border-radius:10px;background:var(--surface);font-size:20px;font-weight:700;color:var(--accent-text)}
+.stepper .qty{min-width:96px;text-align:center;font-weight:700;font-size:15px;padding:0 4px}
+.stepper .massin{display:flex;align-items:center;gap:4px;font-weight:700;font-size:15px;color:var(--muted);padding-right:4px}
+.stepper .massin input{width:64px;padding:6px;text-align:right;background:var(--surface)}
+.portions{display:flex;flex-direction:column;gap:8px}
+.eqs{gap:0;padding:4px 16px}
+.eq{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.eq:first-child{border-top:0}
+.eq span{min-width:0}
+.eq b{white-space:nowrap;font-size:15px}
+.eq.minus b{color:var(--bad)} .eq.plus b{color:var(--leaf)}
+.eq.total{border-top:2px solid var(--ink)}
+.eq.total span{font-weight:700} .eq.total b{color:var(--accent);font-size:20px}
+/* "Zo werkt je minimum": three rules, label left and kcal right on one line; the one that counts gets a tint and a pill. */
+.minexplain{gap:12px}
+.minexplain h3{margin:0;font-size:15px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.minexplain h3 .num{color:var(--accent-text)}
+/* Plain text rows with a divider (not boxes: boxes look like buttons). The rule that counts gets an accent bar on the left. */
+.minrules{display:flex;flex-direction:column}
+.minrule{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0 10px 12px;border-top:1px solid var(--line);border-left:3px solid transparent}
+.minrule:first-child{border-top:0}
+.minrule > span{min-width:0;display:flex;flex-direction:column;gap:2px;line-height:1.3}
+.minrule .note{font-size:12px}
+.minrule b.num{white-space:nowrap;font-size:15px}
+.minrule.win{border-left-color:var(--accent)}
+.minrule.win > span > span:first-child{font-weight:700}
+.minrule.win b.num{color:var(--accent-text)}
+.minrule .pill{background:none;padding:0;border-radius:0;color:var(--accent-text);font-size:12px}
+.minrule.off > span > span:first-child, .minrule.off b.num{color:var(--muted);font-weight:400}
+/* A row that opens something, like the BMI line: label left, value + chevron right. */
+.linkline{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;width:100%;text-align:left;font-size:15px}
+.linkline .chev{color:var(--muted);font-weight:700}
+.linkline .note{white-space:nowrap}
+/* Weigh-ins sheet: a list like the meals, kg right-aligned under each other. */
+.wlist{display:flex;flex-direction:column;gap:0;padding:4px 16px;max-height:52vh;overflow:auto}
+/* Rows never squeeze: with the keyboard open the list is low, and it must scroll instead of pushing rows over each other. */
+.wlist > *{flex-shrink:0}
+.wrow{display:flex;align-items:center;gap:12px;min-height:48px;padding:4px 0;border-top:1px solid var(--line);width:100%;text-align:left}
+.wrow:first-child{border-top:0}
+.wrow .grow{display:flex;align-items:center;gap:8px;min-width:0}
+.wrow b.num{min-width:72px;text-align:right}
+.wrow .chev{color:var(--muted);font-weight:700}
+.wrow.editing{flex-direction:column;align-items:stretch;gap:8px;padding:12px 0}
+.wrow.editing .row{gap:8px}
+.wrow.editing input{flex:1;min-width:0;text-align:right;font-variant-numeric:tabular-nums}
+.wrow.editing .icon-btn{flex:none;color:var(--bad);background:transparent;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 45%,transparent)}
+details.more{background:var(--surface);border-radius:14px;padding:12px 14px}
+details.more summary{font-weight:700;cursor:pointer;color:var(--accent-text);list-style:none;min-height:32px;display:flex;align-items:center}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+ "}
+details.more[open] summary::before{content:"− "}
+details.more p{margin-top:8px;font-size:15px}
+details.more p.note{font-size:12px}
+.savebar{position:sticky;bottom:-20px;margin:0 -16px -20px;padding:10px 16px calc(16px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line);display:flex;gap:8px;z-index:3}
+.savebar .btn{min-height:48px}
+.icon-btn.fav{font-size:20px;background:var(--surface2);color:var(--muted);flex:none}
+.icon-btn.fav.on{color:#E7A712}
+.matches{display:flex;flex-direction:column;gap:6px}
+.yest{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1.5px dashed color-mix(in srgb,var(--leaf) 55%,var(--line));border-radius:14px;padding:10px 12px;min-height:56px}
+.yest .ic{width:36px;height:36px;border-radius:50%;background:color-mix(in srgb,var(--leaf) 16%,transparent);color:var(--leaf);display:grid;place-items:center;font-size:15px;font-weight:700;flex:none}
+.yest b{display:block;font-size:15px}
+.yest .note{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.yest .add{width:30px;height:30px;border-radius:9px;background:var(--leaf);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.matches button{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:12px;padding:8px 10px;text-align:left;min-height:44px;font-weight:400;font-size:15px}
+.matches .mi{font-size:20px}
+.matches .add{width:30px;height:30px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;flex:none}
+.toast{display:flex;align-items:center;gap:12px}
+.toast-act{color:var(--bg);font-weight:700;text-decoration:underline;text-underline-offset:3px;min-height:36px;white-space:nowrap}
+.water-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.water-btns .btn{padding:9px 4px;min-height:44px;font-size:15px;white-space:nowrap}
+.sessions{display:flex;flex-direction:column;gap:4px;font-size:15px}
+.movegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.movegrid div{background:var(--surface2);border-radius:14px;padding:10px 4px}
+.movegrid b{display:block;font-family:var(--display);font-size:20px}
+.movegrid span{font-size:12px;font-weight:700;color:var(--muted)}
+body.typing .nav{display:none}
+body.typing .app{padding-bottom:24px}
+.nav{position:fixed;left:0;right:0;bottom:0;padding:8px 12px 8px;background:color-mix(in srgb,var(--surface) 95%,transparent);border-top:1px solid var(--line);z-index:20}
+.nav .in{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:center}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:700;color:var(--muted);padding:4px 0}
+.nav button svg{width:24px;height:24px}
+.nav button[aria-current="page"]{color:var(--accent-text)}
+.nav button svg{padding:2px 10px;box-sizing:content-box;border-radius:999px}
+.nav button[aria-current="page"] svg{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.nav .fab{width:58px;height:58px;border-radius:20px;background:var(--accent);color:var(--accent-ink);margin:-26px auto 0;display:grid;place-items:center;box-shadow:0 6px 18px color-mix(in srgb,var(--accent) 45%,transparent)}
+.nav .fab svg{width:28px;height:28px}
+.scrim{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.scrim::before{content:"";position:absolute;inset:0;z-index:-1;background:rgb(10 14 10/.45);transition:opacity .22s ease}
+.sheet{background:var(--bg);width:100%;max-width:520px;max-height:92%;overflow:auto;overscroll-behavior:contain;border-radius:24px 24px 0 0;padding:0 16px 20px;display:flex;flex-direction:column;gap:14px;transition:transform .22s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.sheet-top{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;flex-direction:column;gap:6px;padding-top:10px;margin-bottom:-6px;touch-action:none}
+.grab{width:44px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 4px}
+.scrim.enter::before{animation:scrimIn .22s ease-out}
+.sheet.enter{animation:sheetIn .3s cubic-bezier(.2,.8,.2,1)}
+.sheet.dragging{transition:none}
+.scrim.closing{pointer-events:none}.scrim.closing::before{opacity:0;transition-timing-function:ease-in}
+.scrim.closing .sheet{transform:translateY(105%)!important;transition:transform .22s ease-in}
+@keyframes sheetIn{from{transform:translateY(100%)}}
+@keyframes scrimIn{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.scrim.enter::before,.sheet.enter{animation:none}.sheet,.scrim::before,.scrim.closing .sheet{transition:none}}
+.items{display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:1fr 78px auto;gap:8px;align-items:center;background:var(--surface);border-radius:14px;padding:10px}
+.item .nm{font-weight:700;font-size:15px;min-width:0;overflow-wrap:anywhere}
+.item .mc{font-size:12px;color:var(--muted)}
+.item input{padding:7px 8px;text-align:right}
+.item .x{color:var(--muted);font-size:20px;width:36px;height:36px;border-radius:10px;background:var(--surface2);display:grid;place-items:center}
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.sum div{background:var(--surface);border-radius:12px;padding:8px 4px}
+.sum b{display:block;font-family:var(--display);font-size:15px}
+.sum span{font-size:12px;color:var(--muted);font-weight:400}
+.score{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:26px;padding:0 8px;border-radius:9px;font-weight:700;font-size:15px}
+.thinking{display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface);border-radius:var(--r);font-weight:400}
+.dots i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:4px;animation:dot 1s infinite alternate}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes dot{to{opacity:.2;transform:translateY(-3px)}}
+/* Photo being looked at: the photo itself, a soft glowing line sweeping down and up, and corner marks like a viewfinder. */
+.photoscan{position:relative;overflow:hidden;border-radius:var(--r);margin-bottom:10px;background:var(--surface);aspect-ratio:4/3}
+.photoscan img{display:block;width:100%;height:100%;object-fit:cover;animation:shotIn .35s ease-out}
+.photoscan::after{content:"";position:absolute;inset:10px;pointer-events:none;
+  background:linear-gradient(#fff,#fff) 0 0/22px 3px,linear-gradient(#fff,#fff) 0 0/3px 22px,linear-gradient(#fff,#fff) 100% 0/22px 3px,linear-gradient(#fff,#fff) 100% 0/3px 22px,
+    linear-gradient(#fff,#fff) 0 100%/22px 3px,linear-gradient(#fff,#fff) 0 100%/3px 22px,linear-gradient(#fff,#fff) 100% 100%/22px 3px,linear-gradient(#fff,#fff) 100% 100%/3px 22px;
+  background-repeat:no-repeat;opacity:.85;filter:drop-shadow(0 1px 2px rgb(0 0 0/.4))}
+.scanline{position:absolute;left:0;right:0;top:0;height:28%;pointer-events:none;
+  background:linear-gradient(to bottom,transparent,color-mix(in srgb,var(--accent) 35%,transparent) 85%,var(--accent) 97%,transparent);
+  animation:scan 2.2s ease-in-out infinite alternate}
+.scanline::after{content:"";position:absolute;left:0;right:0;bottom:3%;height:2px;background:#fff;box-shadow:0 0 10px 2px var(--accent);opacity:.9}
+@keyframes scan{from{transform:translateY(-100%)}to{transform:translateY(357%)}}
+@keyframes shotIn{from{opacity:0;transform:scale(1.03)}}
+@media (prefers-reduced-motion:reduce){.scanline{animation:none;top:auto;bottom:0;opacity:.6}.photoscan img{animation:none}}
+.err{background:color-mix(in srgb,var(--bad) 12%,var(--surface));border-radius:14px;padding:12px;font-size:15px;font-weight:400}
+.ok{background:color-mix(in srgb,var(--leaf) 14%,var(--surface));border-radius:14px;padding:12px;font-size:15px;font-weight:400}
+.note{font-size:12px;color:var(--muted)}
+/* Each idea is its own block: a band in the page colour between them, so they don't read as one long list. */
+.idea{display:flex;flex-direction:column;gap:8px;border-top:10px solid var(--bg);margin:0 -16px;padding:16px 16px 18px}
+.idea:first-child{border-top:0;padding-top:4px}
+.idea:last-child{padding-bottom:4px}
+.idea-h{display:flex;flex-direction:column;align-items:flex-start;gap:8px;width:100%;text-align:left}
+.idea-h .chev{color:var(--accent-text);font-weight:700;margin-left:8px;font-size:15px;line-height:1}
+.idea-h:disabled{opacity:1}
+.idea-more{background:var(--surface2);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;position:relative}
+.idea-more.clip{max-height:96px;overflow:hidden}
+.idea-more.clip::after{content:"";position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(to bottom,transparent,var(--surface2));pointer-events:none}
+.idea-toggle{align-self:center;display:grid;place-items:center;width:44px;height:32px;margin-top:-18px;border-radius:999px;background:var(--surface);color:var(--accent-text);box-shadow:0 2px 6px rgb(0 0 0/.15);position:relative;z-index:1}
+.tag.over{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn-ink)}
+.tag.price{background:color-mix(in srgb,var(--leaf) 16%,transparent);color:color-mix(in srgb,var(--leaf) 62%,var(--ink))}
+.persons{display:flex;flex-direction:column;gap:6px}
+/* Ingredients: name with the pack size small underneath, kcal on the right. Side by side, a long word like
+   "Snackkomkommer" ran under the pack size and short names were squeezed onto three lines. */
+.ingr{display:flex;flex-direction:column;gap:2px;font-size:15px}
+.ingr .row{min-height:28px;gap:8px}
+.ingr:has(.irow){gap:0}
+.ingr .irow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.ingr .irow:first-child{border-top:0}
+.ingr .irow > span:first-child{min-width:0;display:flex;flex-direction:column;gap:2px;line-height:1.3;overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto}
+.ingr .irow .note{font-size:12px}
+.ingr .irow b{white-space:nowrap;flex:none}
+.legend-line{display:inline-block;vertical-align:middle;width:16px;height:0;border-top:2px dashed var(--ink);opacity:.55;margin-right:4px}
+.legend-line.min{border-top:2px dotted var(--bad);opacity:.8}
+.legend-line.trend{border-top:3px solid var(--ink);opacity:.8;border-radius:2px}
+.askq{background:color-mix(in srgb,var(--sky) 14%,var(--surface));border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.askq .chip{font-size:15px}
+.tag.pkg{background:color-mix(in srgb,var(--leaf) 16%,transparent);color:color-mix(in srgb,var(--leaf) 62%,var(--ink));font-size:12px;vertical-align:middle}
+.tag.hid{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn-ink);font-size:12px;vertical-align:middle}
+.check{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border-radius:var(--r);padding:12px 16px;font-weight:400;font-size:15px;min-height:56px}
+.check .box{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-weight:700;color:var(--accent-ink);flex:none}
+.check[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent)}
+.tipcard h3{margin-top:-4px}
+.legend-line.sky{border-top:3px solid var(--sky);opacity:1;border-radius:2px}
+.tag{font-size:12px;font-weight:700;padding:3px 8px;border-radius:8px;background:var(--surface2);color:var(--muted)}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat b{font-family:var(--display);font-size:20px;line-height:1.1}
+.shop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.shop button span:first-of-type{text-align:center;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;line-height:1.2;font-size:12px}
+.shop button{background:var(--surface2);border-radius:16px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:700;border:2px solid transparent;position:relative}
+.shop button.locked svg{opacity:.55}
+.shop button.questitem{background:linear-gradient(160deg,color-mix(in srgb,var(--sky) 20%,var(--surface2)),var(--surface2))}
+.shop .game{font-size:12px;font-weight:700;color:var(--muted);margin-top:-3px;text-align:center;line-height:1.2}
+.shop .price.quest{background:color-mix(in srgb,var(--sky) 18%,var(--surface));color:var(--ink)}
+.shop button.lvitem{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 22%,var(--surface2)),var(--surface2))}
+.shop button.locked .price{color:var(--muted)}
+.shop .price{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--surface);white-space:nowrap}
+.shop .price.buy{background:var(--accent);color:var(--accent-ink)}
+.shop .price.two{display:flex;flex-direction:column;align-items:center;border-radius:12px;line-height:1.25;padding:3px 10px}
+.shop .price.two small{font-size:12px;font-weight:700}
+.shop .price.on{background:var(--leaf);color:#fff}
+.shop .price.own{background:var(--surface);color:var(--ink);border:1.5px solid var(--line)}
+.shop button[aria-pressed="true"]{border-color:var(--accent);background:var(--surface)}
+.shop svg{width:100%;max-width:84px;height:auto}
+.seedpill{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;line-height:1;background:var(--surface);border-radius:999px;padding:8px 12px;font-weight:700;border:1.5px solid color-mix(in srgb,var(--accent) 40%,var(--line));min-height:42px}
+.seedhead{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0 8px}
+.seedhead .num{font-family:var(--display);font-size:32px;font-weight:700;line-height:1.1}
+.seedday{display:flex;flex-direction:column;gap:2px;background:var(--surface);border-radius:14px;padding:10px 14px}
+.seedrow{min-height:32px;font-size:15px}
+.seedrow b.plus{color:var(--leaf)} .seedrow b.min{color:var(--muted)}
+.seedpill .chev{color:var(--muted);font-size:15px;margin-left:-2px}
+.btn.outline{background:transparent;color:var(--accent-text);border:1.5px solid var(--accent)}
+button:not(:disabled):active{transform:scale(.97)}
+.entry:active,.sheet-top button:active{transform:none}
+.btn,.chip,.icon-btn,.seedpill,.shop button,.nav button{transition:transform .08s ease,background-color .15s ease}
+.chart{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:12px;font-family:var(--body);font-weight:400}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-weight:700;z-index:60;max-width:calc(100% - 32px);text-align:center;box-shadow:0 8px 24px rgb(0 0 0/.2)}
+.fastring{position:relative;width:120px;height:120px;flex:none}
+.fastring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.fastring .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-weight:700}
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.pill.good{background:color-mix(in srgb,var(--leaf) 18%,transparent);color:var(--leaf)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn-ink)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.ci{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.ci:first-child{border-top:0}
+ol.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.recent{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.recent button{flex:none;background:var(--surface);border-radius:12px;padding:8px 12px;font-size:15px;font-weight:400;text-align:left;max-width:180px}
+.recent button span{display:block;font-size:12px;color:var(--muted)}
+@media (max-width:380px){.hero{grid-template-columns:1fr;justify-items:center}.macros{width:100%}}
+/* UI-review: lege balken zichtbaar, lege maaltijd als één regel, ringgetal is tikbaar */
+.bar{background:color-mix(in srgb,var(--ink) 12%,var(--surface))}
+
+.ringnum{font:inherit;color:inherit}
+.weekbud{gap:12px}
+.weighin{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:14px;background:var(--surface2)}
+.weighin .ci{padding:6px 0}
+.fitweek{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--surface2);font-size:15px}
+.fitweek>span{font-size:20px;line-height:1.3}
+.fitweek p{margin:0}
+.fitweek.good{background:color-mix(in srgb,var(--leaf) 14%,var(--surface));border:1.5px solid color-mix(in srgb,var(--leaf) 45%,transparent)}
+.fitweek.warn{background:color-mix(in srgb,var(--warn) 14%,var(--surface));border:1.5px solid color-mix(in srgb,var(--warn) 45%,transparent)}
+.wkhero{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wkhero>span{display:flex;flex-direction:column}
+.wkhero .pill{white-space:nowrap;flex:none}
+.wkhero b{font-family:var(--display);font-size:32px;line-height:1.1}
+.wkhow{margin:-4px 0 0;font-size:15px}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:10px 8px 8px;border-radius:14px;background:var(--surface2)}
+.wkd{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.wkl{font-size:12px;font-weight:700;color:var(--muted);text-transform:capitalize}
+.wkd.now .wkl{color:var(--accent-ink);background:var(--accent);border-radius:8px;padding:0 6px}
+.wkt{contain:layout;position:relative;width:100%;max-width:28px;height:64px;border-radius:9px;background:var(--surface);overflow:hidden}
+.wkt::after{content:"";position:absolute;left:0;right:0;bottom:76.9%;border-top:2px dashed color-mix(in srgb,var(--ink) 35%,transparent)}
+.wkt i{position:absolute;left:0;right:0;bottom:0;border-radius:9px;transition:height .5s cubic-bezier(.2,.8,.2,1)}
+.wkd.fut .wkt{background:transparent;outline:2px dashed color-mix(in srgb,var(--ink) 18%,transparent);outline-offset:-2px}
+.wkv{font-size:12px;font-weight:700;color:var(--leaf);min-height:14px;white-space:nowrap}
+.wkv.over{color:var(--warn-ink)}
+.wkv.less{color:var(--sky)}
+.wkd.now .wkv{color:var(--accent-text)}
+
+.ringnum .goalline{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);font-weight:400;margin-top:4px}
+.ringnum .tickmark{display:inline-block;width:3px;height:12px;border-radius:2px;background:var(--ink);opacity:.55}
+.ringnum .goalline i{font-style:normal;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--accent-text);color:var(--accent-text);display:grid;place-items:center;font-size:12px;font-weight:700}
+/* Add sheet: known foods as cards with a + */
+.recent{overflow-y:hidden;align-items:stretch;flex:none}
+.recent button{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 10px}
+.recent button .rn{display:flex;flex-direction:column;min-width:0;color:var(--ink);font-size:15px}
+.recent button .rn span{display:block}
+.recent4{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.recent4 button{display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:12px;padding:8px 8px 8px 10px;text-align:left;min-width:0;min-height:58px}
+.recent4 .rn{display:flex;flex-direction:column;min-width:0;flex:1;font-size:15px;color:var(--ink)}
+.recent4 .rn b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25;overflow-wrap:anywhere}
+.recent4 .rn span{font-size:12px;color:var(--muted)}
+.recent4 .add{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;flex:none;font-size:15px}
+.recent button .add{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;flex:none;font-size:15px}
+/* Edit sheet: parts folded away */
+details.parts{background:var(--surface);border-radius:14px;padding:4px 12px}
+details.parts summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;font-weight:700;color:var(--accent-text)}
+details.parts summary::-webkit-details-marker{display:none}
+details.parts summary .chev{transition:transform .15s}
+details.parts[open] summary .chev{transform:rotate(90deg)}
+details.parts .items{padding-bottom:10px}
+details.parts .item2{background:var(--bg)}
+details.scalewhy{background:var(--surface2)}
+.scoretips{display:flex;flex-direction:column;gap:6px;background:var(--surface);border-radius:14px;padding:12px}
+.scoretips .st-row{display:flex;gap:10px;align-items:center;font-size:15px}
+.scoretips .st-row b{color:var(--leaf);white-space:nowrap}
+.succes ul{margin:0 0 6px;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:15px}
+details.scalewhy ul{margin:0 0 6px;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:15px}
+/* Badges: earned ones get colour */
+.badge.got{background:color-mix(in srgb,var(--c) 22%,var(--surface2))}
+/* Wardrobe: a small panda that wears your outfit while you shop; calm price tags */
+.shoppreview{position:sticky;top:var(--pettabs-h,56px);z-index:4;display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:var(--r);padding:8px 14px;box-shadow:0 -14px 0 var(--bg),0 4px 10px -6px rgb(0 0 0/.25)}
+.shoppreview .pet{width:64px;flex:none}
+.shop .price.buy{background:var(--surface);color:var(--ink);border:1.5px solid color-mix(in srgb,var(--accent) 45%,var(--line))}
+.wearchips{display:flex;flex-wrap:wrap;gap:8px}
+/* Settings: one line per part, open it to change */
+details.setx summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:44px}
+details.setx summary::-webkit-details-marker{display:none}
+details.setx summary h3{flex:1}
+details.setx summary .chev{color:var(--muted);font-weight:700;transition:transform .15s}
+details.setx[open] summary .chev{transform:rotate(90deg)}
+details.setx > :not(summary){margin-top:12px!important}  /* the gap of a flex card does not reach inside <details> */
+#ai-prefs{min-height:112px}
+.pill.off{background:var(--surface2);color:var(--muted)}
+/* Toasts: a pile above the tab bar (at the top while a sheet is open). Each one pops in, a thin line
+   counts down its time, then it fades out slowly. The newest lands on top. */
+#toastRoot{position:fixed;left:16px;right:16px;bottom:96px;z-index:60;display:flex;flex-direction:column-reverse;align-items:center;gap:8px;pointer-events:none}
+body:has(.scrim) #toastRoot{top:calc(12px + env(safe-area-inset-top,0px));bottom:auto;flex-direction:column}
+#toastRoot .toast{position:relative;left:auto;bottom:auto;transform:none;max-width:100%;overflow:hidden;pointer-events:auto;animation:toastIn .35s cubic-bezier(.3,1.5,.5,1)}
+#toastRoot .toast::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:currentColor;opacity:.25;transform-origin:left;animation:toastLife var(--life,2800ms) linear forwards}
+#toastRoot .toast.out{opacity:0;transform:translateY(8px) scale(.96);transition:opacity 1s ease,transform 1s ease}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.9)}}
+@keyframes toastLife{to{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){#toastRoot .toast,#toastRoot .toast::after{animation:none}#toastRoot .toast.out{transition:none}}
+details.setx:not([open]){padding-block:6px}
+/* Ronde 2: macro's als ringetjes, maaltijden in één kaart, tegels voor vocht/beweging/vasten */
+.minis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;width:100%}
+.mini{display:flex;flex-direction:column;align-items:center;gap:2px}
+.mring{position:relative;width:56px;height:56px}
+.mring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.mring span{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:15px}
+.mini .ml{font-weight:400;font-size:15px}
+:root{--fsat:color-mix(in srgb,var(--f) 50%,#000)}
+.satline{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:36px;font-size:15px;font-weight:400;color:var(--ink)}
+.satsrc{display:flex;flex-direction:column;gap:8px;background:var(--surface);border-radius:14px;padding:12px 14px}
+.ss-row{display:grid;grid-template-columns:1fr 64px auto;align-items:center;gap:10px;font-size:15px}
+.ss-n{display:flex;flex-direction:column;min-width:0;overflow-wrap:anywhere}
+.ss-n .note{font-size:12px;font-weight:400}
+.ss-bar{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.ss-bar i{display:block;height:100%;border-radius:99px;background:var(--fsat)}
+.ss-g{min-width:44px;text-align:right}
+.ss-row > .note{grid-column:2 / 4;text-align:right}
+.satline .sw{width:12px;height:12px;border-radius:4px;background:var(--fsat);flex:none}
+.satline .st{display:flex;flex-direction:column;align-items:center;line-height:1.3}
+.satline .note{font-weight:400;font-size:12px}
+.satline i{font-style:normal;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--accent-text);color:var(--accent-text);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.ringnum .legend{display:inline-flex;align-items:center;gap:12px;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+.nowdot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ink);margin-right:4px;vertical-align:middle}
+.meals{gap:0}
+.mealsec{border-top:1px solid var(--line);padding:4px 0}
+.mealsec:first-child{border-top:0;padding-top:0}
+.mealsec .meal-h{min-height:44px;gap:10px}
+.mealsec .meal-h h3{flex:1}
+.mealsec .bsum{font-weight:700;font-size:15px;color:var(--muted)}
+.mealtotal{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:2px solid var(--line);padding:10px 0 4px;margin-top:2px;font-weight:700}
+.mealtotal b{font-size:17px}
+.mealtotal + .mealfoot{border-top:0;padding-top:4px}
+.mealfoot{border-top:1px solid var(--line);padding-top:10px;margin-top:4px;display:flex;flex-direction:column;gap:8px}
+.tiles{display:grid;gap:8px}
+.tile{background:var(--surface2);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:80px;text-align:center;border:2px solid transparent}
+.tile[aria-expanded="true"]{border-color:color-mix(in srgb,var(--ink) 55%,transparent);background:var(--surface)}
+.tile .ti{font-size:20px;line-height:1.1}
+.tile b{font-size:15px}
+.tilebody{display:flex;flex-direction:column;gap:12px;padding-top:4px}
+details.setx[open] summary .chev,details.parts[open] summary .chev{transform:rotate(180deg)}
+/* Ronde 3 */
+.ringpet{position:relative;width:100%}
+.ringmode{position:absolute;top:0;right:0;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 12px;border-radius:999px;background:var(--surface2);font-size:12px;font-weight:700;color:var(--ink)}
+.water-btns{grid-template-columns:repeat(3,1fr)}
+.waterin{display:flex;gap:8px;align-items:center}
+.waterin label{flex:1;display:flex;align-items:center;gap:6px;font-weight:400;color:var(--muted)}
+.waterin input{flex:1}
+.fastplans{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fastplan{background:var(--surface2);border-radius:14px;padding:10px 12px;text-align:left;border:2px solid transparent;min-height:64px;display:flex;flex-direction:column;gap:2px;position:relative}
+.fastplan b{font-family:var(--display);font-size:20px;line-height:1.1}
+.fastplan span{font-size:12px;color:var(--muted);font-weight:400}
+.fastplan[aria-pressed="true"]{border-color:var(--leaf);background:var(--surface)}
+.fastplan[aria-pressed="true"]::after{content:"✓";position:absolute;top:8px;right:10px;width:22px;height:22px;border-radius:50%;background:var(--leaf);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.nbadges{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.nb{font-size:12px;font-weight:400;padding:1px 8px;border-radius:999px;background:color-mix(in srgb,var(--leaf) 16%,transparent);color:color-mix(in srgb,var(--leaf) 62%,var(--ink))}
+.nbexplain{display:flex;flex-direction:column;gap:6px;background:var(--surface);border-radius:14px;padding:10px 12px}
+.nbexplain p{font-size:15px}
+.weekstrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.weekstrip div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:400;color:var(--muted)}
+.weekstrip i{font-style:normal;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);color:var(--muted);font-weight:700}
+.weekstrip .on i{background:var(--accent);color:var(--accent-ink)}
+.weekstrip .today{color:var(--ink)}
+.weekstrip .today i{box-shadow:0 0 0 2px var(--ink)}
+.weekstrip .later i{opacity:.4}
+.streakhero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}
+.streakhero .pet{width:140px}
+.flame{display:inline-block;vertical-align:-.2em;overflow:visible}
+.flame:not(.alive) .fl,.flame:not(.alive) .spark{animation-play-state:paused}
+.flame .fl{transform-box:fill-box;transform-origin:50% 100%;animation:flameFlick 1.1s ease-in-out infinite alternate}
+@keyframes flameFlick{0%{transform:scaleY(1) skewX(0)}50%{transform:scaleY(1.07) skewX(-3deg)}100%{transform:scaleY(.96) skewX(3deg)}}
+.flame .spark{animation:flameSpark 1.4s ease-out infinite}
+.flame .spark.s2{animation-delay:.7s}
+@keyframes flameSpark{0%{transform:translateY(4px);opacity:0}30%{opacity:1}100%{transform:translateY(-6px);opacity:0}}
+.streakhero .num.streaknum{display:inline-flex;align-items:center;gap:6px}
+@media (prefers-reduced-motion:reduce){.flame .fl,.flame .spark{animation:none}}
+.streakhero .num{font-family:var(--display);font-size:32px;font-weight:700;line-height:1}
+.streakpill{display:inline-flex;align-items:center;gap:2px;margin-left:6px;padding:2px 10px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent-text);font-family:var(--body);font-size:15px;font-weight:700;vertical-align:middle}
+.streaktrack{display:flex;flex-direction:column;gap:8px;background:var(--surface);border-radius:14px;padding:12px 14px}
+.streaktrack .steps{display:flex;justify-content:space-between}
+.streaktrack .steps span{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:400;color:var(--muted)}
+.streaktrack .steps i{font-style:normal;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);font-size:15px}
+.streaktrack .steps .on{color:var(--ink)}
+.streaktrack .steps .on i{background:color-mix(in srgb,var(--accent) 22%,var(--surface2))}
+.streaktrack .steps .next i{box-shadow:0 0 0 2px var(--accent)}
+.unlock{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:8px 0}
+.slots{display:flex;gap:10px}
+.slots i{font-style:normal;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:700;background:var(--surface2);color:var(--muted);border:2px dashed var(--line)}
+.slots i.on{background:var(--leaf);color:#fff;border:2px solid var(--leaf)}
+/* Ronde 4: korte animaties, alleen transform en opacity (behalve het dichtklappen van een verwijderde regel),
+   elk één keer en binnen 0,2 tot 0,6 s. Met "minder beweging" op de telefoon staat alles uit. */
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}}
+@keyframes fromR{from{opacity:0;transform:translateX(24px)}}
+@keyframes fromL{from{opacity:0;transform:translateX(-24px)}}
+.app.page-in{animation:pageIn .18s ease-out}
+.app.from-r{animation:fromR .2s ease-out}
+.app.from-l{animation:fromL .2s ease-out}
+@keyframes reveal{from{opacity:0;transform:translateY(-6px)}}
+.tilebody.reveal,.blk.reveal > :not(.blk-h),details.opening > :not(summary){animation:reveal .2s ease-out}
+.seg button{position:relative;isolation:isolate}
+.seg button[aria-pressed="true"]{background:transparent;box-shadow:none}
+.seg button[aria-pressed="true"]::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:11px;background:var(--surface);box-shadow:0 1px 3px rgb(0 0 0/.1);transform-origin:left center}
+.check.just .box,.chip.just,.fastplan.just::after,.cup.just::after{animation:pop .28s cubic-bezier(.3,1.8,.5,1)}
+@keyframes flare{0%{transform:scale(1)}35%{transform:scale(1.28) rotate(-6deg)}70%{transform:scale(.96) rotate(3deg)}100%{transform:none}}
+.streakpill.flare{animation:flare .5s ease-out}
+.portchips{display:flex;flex-wrap:wrap;gap:8px}
+.srcline a{color:var(--accent-text);font-weight:400;text-decoration:underline;text-underline-offset:2px}
+.portchips .chip{min-height:40px}
+details.weightips{border-top:1px solid var(--line);padding-top:4px}
+details.weightips summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;font-weight:700;font-size:15px}
+details.weightips summary::-webkit-details-marker{display:none}
+details.weightips summary .chev{color:var(--muted);transition:transform .15s}
+details.weightips[open] summary .chev{transform:rotate(180deg)}
+details.weightips ul{margin:4px 0 8px;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px}
+details.weightips .note{margin-bottom:4px}
+.wstats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wtile{background:var(--surface2);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;min-height:84px}
+.wtile b{font-family:var(--display);font-size:20px;line-height:1.2}
+.wtile .note{font-weight:400}
+.fc-big{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:4px 0}
+.fc-big b{font-family:var(--display);font-size:32px;line-height:1.15}
+.trendinfo{display:flex;width:fit-content;align-items:center;gap:6px;min-height:32px;font-size:12px;color:var(--muted);font-weight:400}
+.trendinfo i{font-style:normal;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--accent-text);color:var(--accent-text);display:grid;place-items:center;font-size:12px;font-weight:700}
+.mring svg circle{transition:stroke-dashoffset .7s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion:reduce){.mring svg circle{transition:none}}
+@keyframes barGrow{from{transform:scaleY(0)}}
+.page-in .chart rect[rx]{transform-box:fill-box;transform-origin:50% 100%;animation:barGrow .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes draw{from{stroke-dashoffset:1}}
+.page-in .wl{stroke-dasharray:1;animation:draw .6s ease-out both}
+@media (prefers-reduced-motion:reduce){.app.page-in,.app.from-r,.app.from-l,.tilebody.reveal,.blk.reveal > *,details.opening > *,.just,.just *,.just::after,.streakpill.flare,.page-in .chart rect,.page-in .wl{animation:none!important}}
+
+/* ---------- flair (each part behind its own class on <html>) ---------- */
+@font-face{font-family:"Fredoka";font-style:normal;font-weight:400 700;font-display:swap;src:url("../fonts/fredoka.woff2") format("woff2")}
+/* 1. Font: Fredoka for titles and big numbers */
+html:not(.fl-font){--display:ui-rounded,"SF Pro Rounded","Roboto",system-ui,sans-serif}
+html.fl-font :is(.seedpill,.bsum,.tile b,.wkhero b,.stat b,.kc > span,.fc-big b,.kgbig){font-family:var(--display)}
+/* 2. A colour per meal */
+:root{--m-ontbijt:#E9A93A;--m-lunch:#4FAF77;--m-diner:#F07A45;--m-snack:#E2709E;--m-water:#4A9FE0;--m-move:#4FAF77;--m-fast:#9B87E8}
+html.fl-meal .mealsec[data-m] .entry .thumb{background:color-mix(in srgb,var(--mc) 20%,var(--surface2))}
+html.fl-meal .mealsec[data-m] .meal-h .add-line{color:color-mix(in srgb,var(--mc) 70%,var(--ink))}
+html.fl-meal .mealsec[data-m] .meal-h h3::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--mc);margin-right:8px;vertical-align:1px}
+html.fl-meal.fl-icons .mealsec[data-m] .meal-h h3::before{display:none}
+html.fl-meal .mealpick button[aria-pressed="true"]{border-color:var(--mc);background:color-mix(in srgb,var(--mc) 16%,var(--surface))}
+/* 3. Depth and glow: a glow behind the ring, cards with a soft light edge, a sky that follows the time of day */
+html.fl-glow .ringpet .ring.big{position:relative;isolation:isolate}
+html.fl-glow .ringpet .ring.big::before{content:"";position:absolute;left:50%;top:50%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,color-mix(in srgb,var(--glow,var(--accent)) 30%,transparent) 0%,color-mix(in srgb,var(--glow,var(--accent)) 10%,transparent) 38%,transparent 62%)}
+html.fl-glow .card{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 94%,#fff) 0%,var(--surface) 70%);box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 7%,transparent),0 10px 24px -14px rgb(0 0 0/.45)}
+html.fl-glow body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(130% 55% at 50% -8%,var(--tod,transparent) 0%,transparent 70%)}
+html.fl-glow[data-tod="morning"]{--tod:color-mix(in srgb,#FFB45E 26%,transparent)}
+html.fl-glow[data-tod="day"]{--tod:color-mix(in srgb,#8FD9A8 18%,transparent)}
+html.fl-glow[data-tod="evening"]{--tod:color-mix(in srgb,#FF7A45 24%,transparent)}
+html.fl-glow[data-tod="night"]{--tod:color-mix(in srgb,#6C7CFF 22%,transparent)}
+/* 4. Knabbel in the top bar of every page */
+.minipet{width:40px;height:40px;flex:none;border-radius:50%;padding:0;border:0;overflow:hidden;background:var(--surface2);display:grid;place-items:center}
+.minipet svg{width:46px;height:auto;display:block;margin-top:4px}
+.minipet svg .eyes{transform-box:fill-box;transform-origin:center;animation:blink 5.2s ease-in-out infinite}
+
+/* 5. Moments: the end of the day, a whole kilo */
+.daydone{border:2px solid color-mix(in srgb,var(--leaf) 55%,transparent);background:linear-gradient(160deg,color-mix(in srgb,var(--leaf) 14%,var(--surface)),var(--surface) 70%)}
+.daydone .checks{display:flex;flex-direction:column;gap:6px}
+.daydone .checks span{display:flex;gap:8px;align-items:center}
+.daydone .checks i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--surface2);color:var(--muted)}
+.daydone .checks .ok i{background:var(--leaf);color:#fff}
+.kgparty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+.kgparty .kgbig{font-size:56px;font-weight:700;line-height:1;color:var(--leaf);animation:pop .6s cubic-bezier(.3,1.8,.5,1)}
+.kgparty svg{width:150px;height:auto}
+/* 6. Own icons */
+.fic{width:22px;height:22px;flex:none;color:var(--accent-text);vertical-align:-5px;margin-right:6px}
+.mealpick .fic{margin:0 0 2px;width:24px;height:24px}
+.tile .ti .fic,.meal-h h3 .fic{margin-right:6px}
+html.fl-meal .fic-ontbijt{color:var(--m-ontbijt)}html.fl-meal .fic-lunch{color:var(--m-lunch)}html.fl-meal .fic-diner{color:var(--m-diner)}html.fl-meal .fic-snack{color:var(--m-snack)}
+.fic-water{color:var(--m-water)}.fic-move{color:var(--m-move)}.fic-fast{color:var(--m-fast)}
+@media (prefers-reduced-motion:reduce){.minipet svg .eyes,.kgparty .kgbig{animation:none}}
+
+/* ---------- a livelier Knabbel (html.fl-alive) ----------
+   Every part moves on its own rhythm (body breathes, head sways a beat later, tail swings with overshoot, eyes
+   blink twice now and then and look around), and the actions have anticipation and follow-through: crouch before a
+   jump, squash on landing, ears that flop after. Only transform/opacity, and only while he is on screen. */
+.pet svg .head{transform-box:view-box;transform-origin:100px 134px}
+.pet svg .arm-l{transform-box:view-box;transform-origin:70px 140px}
+.pet svg .nose{transform-box:fill-box;transform-origin:50% 60%}
+.pet svg .blush ellipse{transform-box:fill-box;transform-origin:center}
+.pet svg .follow{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+html.fl-alive .pet.alive svg .head{animation:headIdle 3.4s ease-in-out .25s infinite}
+@keyframes headIdle{0%,100%{transform:rotate(0) translateY(0)}30%{transform:rotate(-1.8deg) translateY(1px)}65%{transform:rotate(1.5deg) translateY(.5px)}}
+html.fl-alive .pet.alive svg .tail{animation:tailIdle 3.2s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes tailIdle{0%,100%{transform:rotate(-5deg)}35%{transform:rotate(10deg)}48%{transform:rotate(6deg)}78%{transform:rotate(-8deg)}}
+html.fl-alive .pet.alive svg .eyes{animation:blink2 6.4s ease-in-out infinite}
+@keyframes blink2{0%,84%,100%{transform:scaleY(1)}86%{transform:scaleY(.08)}88%{transform:scaleY(1)}92%{transform:scaleY(.08)}94%{transform:scaleY(1)}}
+html.fl-alive .pet.alive svg .pupils{animation:wander 11s ease-in-out infinite}
+@keyframes wander{0%,16%,100%{transform:translate(0,0)}20%,36%{transform:translate(-3px,-1px)}42%,56%{transform:translate(3px,1px)}62%,78%{transform:translate(0,-2px)}}
+/* jump: crouch, leap with arms up, land with a squash, settle */
+html.fl-alive .pet.alive.jump svg{animation:jump .95s cubic-bezier(.3,0,.4,1)}
+@keyframes jump{0%,100%{transform:none}14%{transform:translateY(3px) scale(1.08,.9)}40%{transform:translateY(-26px) scale(.94,1.08)}62%{transform:translateY(0) scale(1.1,.88)}76%{transform:translateY(-3px) scale(.97,1.03)}88%{transform:scale(1.02,.98)}}
+html.fl-alive .pet.alive.jump svg .ear.l{animation:earFlopL .95s ease-out}html.fl-alive .pet.alive.jump svg .ear.r{animation:earFlopR .95s ease-out}
+@keyframes earFlopL{0%,100%{transform:none}40%{transform:rotate(16deg)}62%{transform:rotate(-12deg)}80%{transform:rotate(4deg)}}
+@keyframes earFlopR{0%,100%{transform:none}40%{transform:rotate(-16deg)}62%{transform:rotate(12deg)}80%{transform:rotate(-4deg)}}
+html.fl-alive .pet.alive.jump svg .arm-l{animation:armUpL .95s ease-out}html.fl-alive .pet.alive.jump svg .arm-r{animation:armUpR .95s ease-out}
+@keyframes armUpL{0%,100%{transform:none}32%,58%{transform:rotate(75deg)}}
+@keyframes armUpR{0%,100%{transform:none}32%,58%{transform:rotate(-75deg)}}
+/* peek: a curious tilt, ears up, eyes up */
+html.fl-alive .pet.alive.peek svg .head{animation:peekHead 2.2s cubic-bezier(.3,1.3,.5,1)}
+@keyframes peekHead{0%,100%{transform:none}18%,70%{transform:rotate(-13deg) translateX(-3px)}42%{transform:rotate(-16deg) translateX(-3px)}}
+html.fl-alive .pet.alive.peek svg .pupils{animation:peekEyes 2.2s ease-in-out}
+@keyframes peekEyes{0%,100%{transform:none}20%,72%{transform:translate(-2px,-3px)}}
+html.fl-alive .pet.alive.peek svg .ear.l{animation:perkL 2.2s ease-out}html.fl-alive .pet.alive.peek svg .ear.r{animation:perkR 2.2s ease-out}
+@keyframes perkL{0%,100%{transform:none}15%,70%{transform:rotate(-10deg) scale(1.05)}}
+@keyframes perkR{0%,100%{transform:none}15%,70%{transform:rotate(10deg) scale(1.05)}}
+/* sniff: the nose twitches, the head nods along */
+html.fl-alive .pet.alive.sniff svg .nose{animation:sniffNose .17s ease-in-out 8 alternate}
+@keyframes sniffNose{to{transform:translateY(-1.5px) scale(1.14,.9)}}
+html.fl-alive .pet.alive.sniff svg .head{animation:sniffHead 1.5s ease-in-out}
+@keyframes sniffHead{0%,100%{transform:none}20%{transform:translateY(2px) rotate(2deg)}45%{transform:translateY(-1px) rotate(-2deg)}70%{transform:translateY(2px) rotate(1deg)}}
+/* giggle (when you tap him): a happy shake, cheeks glow, ears up */
+html.fl-alive .pet.alive.giggle svg{animation:giggle .75s ease-in-out}
+@keyframes giggle{0%,100%{transform:none}15%{transform:rotate(-5deg) scale(1.05,.95)}30%{transform:rotate(5deg) scale(.97,1.03)}45%{transform:rotate(-4deg)}60%{transform:rotate(3deg)}80%{transform:rotate(-1deg)}}
+html.fl-alive .pet.alive.giggle svg .blush ellipse{animation:blushUp 1.4s ease-out}
+@keyframes blushUp{0%,100%{transform:none}25%,60%{transform:scale(1.45)}}
+html.fl-alive .pet.alive.giggle svg .ear.l{animation:perkL .9s ease-out}html.fl-alive .pet.alive.giggle svg .ear.r{animation:perkR .9s ease-out}
+/* wiggle (after eating): a happy wiggle with a fast tail */
+html.fl-alive .pet.alive.wiggle svg{animation:wiggle .8s ease-in-out}
+@keyframes wiggle{0%,100%{transform:none}10%,30%,50%,70%{transform:rotate(-4deg) translateX(-2px)}20%,40%,60%,80%{transform:rotate(4deg) translateX(2px)}}
+html.fl-alive .pet.alive.wiggle svg .tail{animation:wag .12s ease-in-out 6 alternate}
+html.fl-alive .pet.alive.wiggle svg .blush ellipse{animation:blushUp 1.2s ease-out}
+/* rub: rubs his tummy (hungry, or very full) */
+html.fl-alive .pet.alive.rub svg .arm-l{animation:rub 1.8s ease-in-out}
+@keyframes rub{0%,100%{transform:none}15%{transform:rotate(-38deg)}25%,45%,65%{transform:rotate(-30deg) translateX(4px)}35%,55%,75%{transform:rotate(-44deg) translateX(-2px)}}
+html.fl-alive .pet.alive.rub svg .head{animation:rubHead 1.8s ease-in-out}
+@keyframes rubHead{0%,100%{transform:none}20%,80%{transform:rotate(4deg) translateY(2px)}}
+/* scratch: scratches behind his ear */
+html.fl-alive .pet.alive.scratch svg .arm-r{animation:scratch 1.8s ease-in-out}
+@keyframes scratch{0%,100%{transform:none}20%{transform:rotate(-140deg)}30%,50%,70%{transform:rotate(-150deg)}40%,60%{transform:rotate(-134deg)}}
+html.fl-alive .pet.alive.scratch svg .head{animation:scratchHead 1.8s ease-in-out}
+@keyframes scratchHead{0%,100%{transform:none}20%,80%{transform:rotate(8deg)}}
+html.fl-alive .pet.alive.scratch svg .ear.r{animation:scratchEar .12s ease-in-out .4s 8 alternate}
+@keyframes scratchEar{to{transform:rotate(9deg)}}
+/* doze (sleepy): the head slowly drops and snaps back up */
+html.fl-alive .pet.alive.doze svg .head{animation:doze 2.6s cubic-bezier(.5,0,.5,1)}
+@keyframes doze{0%,100%{transform:none}55%{transform:rotate(6deg) translateY(7px)}62%{transform:rotate(-2deg) translateY(-2px)}72%{transform:none}}
+/* dance and stretch get both arms, the head and the tail along */
+html.fl-alive .pet.alive.dance svg .arm-l{animation:danceArmL 1.7s ease-in-out}html.fl-alive .pet.alive.dance svg .arm-r{animation:danceArmR 1.7s ease-in-out}
+@keyframes danceArmL{0%,100%{transform:none}15%,45%{transform:rotate(80deg)}30%,60%{transform:rotate(20deg)}78%{transform:rotate(105deg)}}
+@keyframes danceArmR{0%,100%{transform:none}15%,45%{transform:rotate(-20deg)}30%,60%{transform:rotate(-80deg)}78%{transform:rotate(-105deg)}}
+html.fl-alive .pet.alive.dance svg .head{animation:danceHead 1.7s ease-in-out}
+@keyframes danceHead{0%,100%{transform:none}15%{transform:rotate(7deg)}45%{transform:rotate(-7deg)}78%{transform:translateY(-2px)}}
+html.fl-alive .pet.alive.dance svg .tail{animation:wag .2s ease-in-out 8 alternate}
+html.fl-alive .pet.alive.stretch svg .arm-l{animation:stretchL 1.9s ease-in-out}html.fl-alive .pet.alive.stretch svg .arm-r{animation:stretchR 1.9s ease-in-out}
+@keyframes stretchL{0%,100%{transform:none}35%,65%{transform:rotate(125deg)}}
+@keyframes stretchR{0%,100%{transform:none}35%,65%{transform:rotate(-125deg)}}
+/* the ring gulps when you save something */
+.ring.big.gulp{animation:gulp .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes gulp{35%{transform:scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.ring.big.gulp{animation:none}.pet svg .follow{transition:none}}
+
+/* ---------- round 10: calmer ---------- */
+.minis[data-act]{cursor:pointer;border-radius:16px}
+button.mini{border-radius:14px;padding:4px 0 6px;min-width:0}
+@media (hover:hover){button.mini:hover{background:var(--surface2)}}
+.minis{grid-template-columns:repeat(4,1fr);gap:4px}
+.tilewrap{position:relative;display:flex}
+.tilewrap > .tile{flex:1}
+.tileadd{position:absolute;top:6px;right:6px;min-width:44px;min-height:32px;border-radius:999px;border:0;padding:0 10px;font-weight:700;font-size:12px;background:color-mix(in srgb,var(--sky) 22%,var(--surface2));color:var(--ink)}
+/* Next to other tiles (movement, fasting) the water tile is narrow: +250 then goes along the bottom, under the text,
+   so it never covers the icon. The other tiles in the row grow along to the same height. */
+.tiles:has(> .tilewrap + .tilewrap) .tilewrap:has(> .tileadd) > .tile{padding-bottom:44px}
+.tiles:has(> .tilewrap + .tilewrap) .tileadd{top:auto;bottom:6px;left:6px;right:6px;min-width:0}
+.leftline{margin:-4px 0 0;color:var(--muted);font-size:15px}
+.leftline b{color:var(--ink);font-family:var(--display);font-size:20px}
+details.opts{border-radius:14px;background:var(--surface2);padding:0 12px}
+details.opts > summary{list-style:none;display:flex;align-items:center;gap:8px;min-height:48px;cursor:pointer}
+details.opts > summary::-webkit-details-marker{display:none}
+details.opts > summary b{flex:none}
+details.opts > summary .note{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.opts > summary .chev{color:var(--muted);transition:transform .2s}
+details.opts[open] > summary .chev{transform:rotate(180deg)}
+details.opts > :not(summary){margin-bottom:12px}
+details.tipline{padding:0}
+details.tipline > summary{list-style:none;display:flex;align-items:center;gap:8px;min-height:48px;padding:0 16px;cursor:pointer}
+details.tipline > summary::-webkit-details-marker{display:none}
+details.tipline > summary .grow{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.tipline[open] > summary .grow{white-space:normal}
+details.tipline > div{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
+details.more-rows > summary{list-style:none;min-height:44px;display:flex;align-items:center;font-weight:700;color:var(--accent-text);cursor:pointer}
+details.more-rows > summary::-webkit-details-marker{display:none}
+details.more-rows > div{display:flex;flex-direction:column;gap:12px}
+.portchips .chip .note{margin-left:6px}
+.bar.thin{height:6px}
+/* Narrow phones: the day name gets the room, the seed pill only shows the number. */
+@media (max-width:400px){.seedpill .sp-w{display:none}}
+/* Wardrobe: the body-part tabs stay in view while you scroll through the items. */
+/* In the wardrobe the body-part tabs and the preview of Knabbel form one panel that stays at the top while you
+   scroll (the Panda/Badges/Kledingkast tabs scroll away). One background, so no strip shows between them. */
+.app:has(.shopsticky) .pettabs{position:static;box-shadow:none}
+.shopsticky{position:sticky;top:0;z-index:5;display:flex;flex-direction:column;gap:6px;padding:6px;background:var(--surface);border-radius:var(--r);box-shadow:0 4px 10px -6px rgb(0 0 0/.25)}
+.shopsticky .shoppreview{position:static;box-shadow:none;padding:4px 8px}
+/* Wardrobe: an earned item (challenge or level) keeps a small medal in its corner. */
+.shop button{position:relative}
+.shop .earned{position:absolute;top:0;right:0;font-size:15px;line-height:1;padding:8px;cursor:pointer}   /* a bigger tap area than the medal itself */
+/* Steps per app: a compact list to choose from (name, steps, a tick at the choice). */
+.stepsrc .srcopts{display:flex;flex-direction:column;background:var(--surface2);border-radius:12px;padding:3px;margin:6px 0}
+.stepsrc .srcopt{display:flex;align-items:center;gap:8px;min-height:36px;padding:4px 10px;border-radius:9px;font-size:13px;text-align:left;color:var(--ink)}
+.stepsrc .srcopt .tick{width:14px;color:var(--accent-text);font-weight:700}
+.stepsrc .srcopt b{font-size:13px;color:var(--muted)}
+.stepsrc .srcopt[aria-pressed="true"]{background:var(--surface);box-shadow:0 1px 3px rgb(0 0 0/.1);font-weight:700}
+.stepsrc .srcopt[aria-pressed="true"] b{color:var(--ink)}
+
+/* Probleem melden (js/melden.js) */
+.meldopt{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;background:var(--surface);border-radius:var(--r);padding:12px 14px;font-size:15px;cursor:pointer}
+.meldopt input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--accent)}
+.leftline .keep{white-space:nowrap}   /* "nog 90 g eiwit" stays on one line */
+.persons .seg button{font-size:14px;padding-inline:2px}   /* "Automatisch" fits on a narrow phone too */
+/* iPhone: the tab bar, the pages, the messages and the sheets stay above the home bar at the bottom (0 on Android). */
+.nav{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+.app{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
+#toastRoot{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.sheet{padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+/* The day switch on Today: one pill "‹ Vandaag ›", so the ‹ doesn't look like a back button. */
+.datebar{flex:0 1 auto;background:var(--surface);border-radius:999px;padding:2px;gap:2px}
+.datebar .icon-btn{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent-text);width:40px;height:40px;border-radius:999px}
+.datebar .icon-btn:not(:disabled):active{background:color-mix(in srgb,var(--accent) 28%,transparent)}
+.datebar .icon-btn:disabled{background:transparent;color:var(--muted);opacity:.35}
+.datebar .d{padding:0 4px}
+/* The weigh-in card on Today: a soft tint instead of a thick orange border. */
+.weighcard{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+/* Knabbel's speech bubble stands out from the card, also in dark mode. */
+.bubble.talk,.bubble.talk::after{background:color-mix(in srgb,var(--ink) 9%,var(--surface))}
+/* "+ Toevoegen" at the meals: a soft pill in the meal's colour instead of four underlined links. */
+.mealsec .meal-h .add-line{text-decoration:none;min-height:36px;padding:0 12px;border-radius:999px;align-self:center;position:relative;background:color-mix(in srgb,var(--mc,var(--accent)) 14%,transparent)}
+.mealsec .meal-h .add-line::after{content:"";position:absolute;inset:-4px 0}
+/* All "i" buttons the same: 18 px, a thin ring in the accent colour. */
+.goal-row i,.xp-row i,.ringnum .goalline i,.satline i,.trendinfo i,details.infox summary i,.info-i{font-style:normal;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--accent-text);color:var(--accent-text);display:inline-grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+/* Light mode: grey text and the status pills a little darker, so small text stays easy to read. */
+:root:not([data-theme="dark"]){--muted:#5C6657}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--muted:#9CA895}}
+.pill.good{color:color-mix(in srgb,var(--leaf) 62%,var(--ink))}
+.pill.warn{color:var(--warn-ink)}
+.pill.bad{color:color-mix(in srgb,var(--bad) 70%,var(--ink))}
+/* The period row under the chart: smaller and lighter than Grafiek / Cijfers above it. */
+.seg:has([data-wrange]){background:transparent;padding:0;box-shadow:none}
+.seg [data-wrange]{font-size:13px;padding:6px 4px;min-height:34px}
+.seg [data-wrange][aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent-text);box-shadow:none}
+.wkd[data-barday]:active .wkt{outline:2px solid var(--accent);outline-offset:1px}
+/* Very small phones (320 px): the four macro rings a bit smaller, so the labels don't touch the edge. */
+@media (max-width:340px){.mini .ml{font-size:13px}.minis .note{font-size:11px}.mring{width:50px;height:50px}}
+
+/* Ronde 16: vocht-feedback, labels onder de naam, macro's swipen, Apple op de iPhone */
+.wfloat{position:fixed;z-index:70;pointer-events:none;font-weight:700;font-size:14px;color:var(--sky);text-shadow:0 1px 0 var(--surface)}
+.cups:has(.wextra){padding-bottom:18px}
+.wextra{position:relative;display:flex}
+.wextra .cup.bonus{border-color:var(--leaf)}
+.wextra .cup.bonus i{background:linear-gradient(180deg,var(--sky),var(--leaf))}
+.wextra .cup.bonus::after{content:"+"}
+.wextra small{position:absolute;top:calc(100% + 2px);left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:var(--leaf);white-space:nowrap}
+.wextra.wbump{animation:none}
+.wextra.wbump .cup.bonus{animation:wglass .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes wglass{0%{transform:scale(1)}40%{transform:scale(1.18) rotate(-6deg)}100%{transform:none}}
+.wbump{animation:wbump .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes wbump{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--sky) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+.tile .wnum{font-weight:700;color:var(--ink)}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{white-space:nowrap}
+.tileadd.apple{background:color-mix(in srgb,var(--bad) 18%,var(--surface2))}
+@media (prefers-reduced-motion:reduce){.wbump{animation:none}}
+.egrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.etile{background:var(--surface2);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.etile:last-child:nth-child(odd){grid-column:1/-1}
+.etile .eh{display:flex;align-items:center;gap:6px}.etile .eic{font-size:18px}
+.etile .bar{margin-top:4px}.etile .note{font-size:12px}
+/* The drop-down list inside the app (see ddHTML). */
+.field.dd{display:flex;flex-direction:column;gap:5px;font-size:15px;font-weight:400;color:var(--muted);min-width:0}
+.ddb{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:46px;padding:10px 12px;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px}
+.ddb .chev{flex:none;color:var(--muted);transition:transform .2s}
+.dd.open .ddb{border-color:var(--accent)}
+.dd.open .ddb .chev{transform:rotate(180deg)}
+.ddt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ddlist{display:flex;flex-direction:column;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;overflow:hidden;max-height:300px;overflow-y:auto;overscroll-behavior:contain}
+.ddlist[hidden]{display:none}
+.ddlist button{min-height:46px;padding:10px 12px;text-align:left;font:inherit;color:var(--ink);border-bottom:1px solid var(--line)}
+.ddlist button:last-child{border-bottom:0}
+.ddlist button[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 12%,var(--surface));font-weight:700}
+.ddlist button[aria-selected="true"]::after{content:"✓";float:right;color:var(--accent-text)}
+/* The tab bar: frosted instead of see-through, so the text under it doesn't show. */
+.nav{background:color-mix(in srgb,var(--surface) 82%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+/* "Undo" in a message: a full-size tap area. */
+.toast-act{min-height:44px;padding:0 6px}
+/* The tip line folds open: its arrow turns. */
+.tipline summary .chev{flex:none;color:var(--muted);transition:transform .2s}
+.tipline[open] summary .chev{transform:rotate(180deg)}
